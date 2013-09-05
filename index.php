@@ -24,4 +24,6 @@ $keys 		= new OAuthKeys($consumerkey, $privateKey);
 $mc2 		= new OAuth($keys);
 echo '<xmp>' . $mc2->api($url, $method, $body) . '</xmp>';*/
 
+$mc2->oAuth_outputs();
+
 ?>
