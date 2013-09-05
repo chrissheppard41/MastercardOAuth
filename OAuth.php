@@ -46,6 +46,7 @@ class OAuth extends AOAuth {
 		}
 
 		$request = new OAuthRequest($method, $url, $params);
+		$request->build_signature($this->oAuthKeys->privatekey);
 		/*echo $hash;
 		echo "<hr>";
 		echo OAuthCommands::urlencode_rfc3986($request->build_signature($this->oAuthKeys->privatekey));
