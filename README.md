@@ -7,7 +7,10 @@ A Mastercard OAuth configuration script based on Googles OAuth, similar methods 
 How to setup
 ------------
 
-Include your script: include("OAuthPush.php"); for example
+Include your script, for example:
+```php
+include("OAuth.php"); 
+```
 
 Initialise your Key storage object:
 ```php
