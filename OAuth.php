@@ -22,6 +22,9 @@ abstract class AOAuth {
 
 class OAuth extends AOAuth {
 	protected $oAuthKeys;
+	protected $hash;
+	protected $header;
+	protected $request;
 
 	function __construct($poAuthKeys) {
 		$this->oAuthKeys 		= $poAuthKeys;
@@ -36,27 +39,18 @@ class OAuth extends AOAuth {
 							"oauth_version"				=> "1.0",
 							"oauth_signature_method"	=> "RSA-SHA1");
 		} else if($method == "POST" || $method == "PUT") {
-			$hash = OAuthCommands::build_body_hash($body);
+			$this->hash = OAuthCommands::build_body_hash($body);
 			$params = array("oauth_consumer_key"		=> $this->oAuthKeys->customerKey,
 							"oauth_nonce"				=> time() . rand(1000, 9999),
 							"oauth_timestamp"			=> time(),
 							"oauth_version"				=> "1.0",
-							"oauth_body_hash"			=> $hash,
+							"oauth_body_hash"			=> $this->hash,
 							"oauth_signature_method"	=> "RSA-SHA1");
 		}
 
-		$request = new OAuthRequest($method, $url, $params);
-		$request->build_signature($this->oAuthKeys->privatekey);
-		echo $hash;
-		echo "<hr>";
-		echo OAuthCommands::urlencode_rfc3986($request->get_encoded_string());
-		echo "<hr>";
-		echo $request->get_base_string();
-		echo "<hr>";
-		echo $request->build_Authorization_header();
-
-
-		$this->header[0] = $request->build_Authorization_header();
+		$this->request = new OAuthRequest($method, $url, $params);
+		$this->request->build_signature($this->oAuthKeys->privatekey);
+		$this->header[0] = $this->request->build_Authorization_header();
 		if($method == "POST" || $method == "PUT") {
 			$this->header[1] = "content-type: application/xml";
 			$this->header[2] = "content-length: ".strlen($body);
@@ -95,6 +89,20 @@ class OAuth extends AOAuth {
 		return $response;
 
 
+	}
+
+	public function oAuth_outputs() {
+		echo $this->hash;
+		echo "<hr>";
+		echo OAuthCommands::urlencode_rfc3986($this->request->get_encoded_string());
+		echo "<hr>";
+		echo $this->request->get_base_string();
+		echo "<hr>";
+		echo $this->request->get_oauth_header_string();
+		echo "<hr>";
+		echo "<pre>";
+		print_r($this->header);
+		echo "</pre>";
 	}
 
 	public function __toString() {
@@ -181,8 +189,8 @@ class OAuthRequest {
 	              '"';
 	      	$first = false;
 	    }
-
-	    return $out;
+	    $this->OAuthHeader = $out;
+	    return $this->OAuthHeader;
   	}
 
 
@@ -195,6 +203,9 @@ class OAuthRequest {
   	}
   	public function get_encoded_string() {
   		return $this->encodedString;
+  	}
+  	public function get_oauth_header_string() {
+  		return $this->OAuthHeader;
   	}
 
 	private function get_normalized_http_method() {
