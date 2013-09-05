@@ -47,13 +47,13 @@ class OAuth extends AOAuth {
 
 		$request = new OAuthRequest($method, $url, $params);
 		$request->build_signature($this->oAuthKeys->privatekey);
-		/*echo $hash;
+		echo $hash;
 		echo "<hr>";
-		echo OAuthCommands::urlencode_rfc3986($request->build_signature($this->oAuthKeys->privatekey));
+		echo OAuthCommands::urlencode_rfc3986($request->get_encoded_string());
 		echo "<hr>";
 		echo $request->get_base_string();
 		echo "<hr>";
-		echo $request->build_Authorization_header();*/
+		echo $request->build_Authorization_header();
 
 
 		$this->header[0] = $request->build_Authorization_header();
@@ -192,6 +192,9 @@ class OAuthRequest {
 
   	public function get_base_string() {
   		return $this->baseString;
+  	}
+  	public function get_encoded_string() {
+  		return $this->encodedString;
   	}
 
 	private function get_normalized_http_method() {
