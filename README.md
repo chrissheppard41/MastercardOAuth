@@ -70,3 +70,8 @@ $keys 		= new OAuthKeys($consumerkey, $privateKey);
 $mc2 		  = new OAuth($keys);
 echo '<xmp>' . $mc2->api($url, $method, $body) . '</xmp>';
 ```
+
+To debug the responses:
+```php
+$mc2->oAuth_outputs();
+```
